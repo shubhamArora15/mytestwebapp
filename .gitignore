@@ -1,0 +1,4 @@
+# Ignorings Folders to upload on git
+node_modules/
+npm-debug.log
+npm-debug.log
