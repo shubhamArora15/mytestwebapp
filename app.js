@@ -4,9 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var cors = require('cors');
 
-var index = require('./routes/index');
+io = require('socket.io');
+
+var mongoose = require('mongoose');
+
+
+//******* DEFINING ALL ROUTES *******//
+
 var users = require('./routes/users');
+var session = require('./routes/session');
+var hierarchy = require('./routes/hierarchy');
 
 var app = express();
 
@@ -21,9 +30,51 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cors());
+app.use(express.static('views'));
 
-app.use('/', index);
+
+//**** CALLING ROUTES ***//
+
 app.use('/users', users);
+app.use('/session', session);
+app.use('/createHierarchy', hierarchy);
+
+
+//*****  DATABASE CONNECTION ****** //
+
+var __databaseURLS = [
+    {
+        uri     : 'mongodb://basic:basic@ds117485.mlab.com:17485/basicapp',
+        dbName  : 'basicdb'
+    }
+]
+
+var __selectedDatabase = __databaseURLS[0];
+
+mongoose.connect( __selectedDatabase.uri);
+
+var db = mongoose.connection;
+db
+.on('connected', function() {
+    console.log(' Database   : ' , __selectedDatabase.dbName);
+})
+
+.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+
+
+//*** SOCKET IMPLEMENTATION  ***//
+
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
+
+//send first response file
+app.get('*', function(req, res) {
+  res.sendFile("index.html",{root:__dirname}); // load the single view file (angular will handle the page changes on the front-end)
+  // res.redirect('/');
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -43,4 +94,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+
+module.exports = {app:app, server:server};

@@ -1,0 +1,25 @@
+<section>
+  <div class="row" style="width:90%;margin:auto">
+  <div class="col-md-6"><h3>Session Management System <span style="color:gray;font-size:24px;">it's Easy</span></h3> </div>
+  </div>  <hr>
+  <div class="form shadow">
+      <center>
+        <h1>
+          Reset
+        </h1>
+    </center>
+
+    <form class="shadow">
+      <div class="form-group">
+        <label for="email">Email address (Registered):</label>
+        <input type="email" class="form-control" id="email" ng-model ="user.email">
+      </div>
+
+      <button class="btn btn-default" ng-click = "reset(user)">Reset passwprd</button>
+      <br>
+      <br>
+      <button class="btn btn-primary" ng-click = "next('signup')">Not a Member ? Sign up Here</button>
+
+    </form>
+  </div>
+</section>
