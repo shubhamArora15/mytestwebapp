@@ -7,6 +7,7 @@ var thirdLevel = require('../models/thirdLevel');
 
 router.post('/', function(req, res){
 console.log(req.body);
+// *** Create Levels ***//
     if(req.body.type == "l1"){
 
         var firstLevelData = new firstLevel({
@@ -46,6 +47,7 @@ console.log(req.body);
       });
     }
 
+// *** Get Levels ***//
     if(req.body.getList){
       firstLevel.find(function(err, data){
         if(data){
@@ -53,22 +55,36 @@ console.log(req.body);
         }
       })
     }
-
+    if(req.body.getSecondList){
+      secondLevel.find({firstLevel:req.body.id},function(err, data){
+        if(data){
+          res.send(data);
+        }
+      })
+    }
+    if(req.body.getThirdList){
+      thirdLevel.find({secondLevel:req.body.id},function(err, data){
+        if(data){
+          res.send(data);
+        }
+      })
+    }
+// *** Update Levels ***//
     if(req.body.updateList){
       if(req.body.type == "first"){
-        firstLevel.({_id:req.body.id},{name:req.body.value},function(err, data){
+        firstLevel.update({_id:req.body.id},{name:req.body.value},function(err, data){
           if(data){
             res.send(data);
           }
         });
       }if(req.body.type == "second"){
-        firstLevel.({_id:req.body.id},{name:req.body.value},function(err, data){
+        secondLevel.update({_id:req.body.id},{name:req.body.value},function(err, data){
           if(data){
             res.send(data);
           }
         });
       }if(req.body.type == "third"){
-        firstLevel.({_id:req.body.id},{name:req.body.value},function(err, data){
+        thirdLevel.update({_id:req.body.id},{name:req.body.value},function(err, data){
           if(data){
             res.send(data);
           }
@@ -76,7 +92,7 @@ console.log(req.body);
       }
     }
 
-
+// *** Delete Levels ***//
     if(req.body.deleteList){
       firstLevel.remove({_id:req.body.id}, function(err, data){
         if(data){
@@ -93,6 +109,7 @@ console.log(req.body);
       })
     }
 
+// *** Find Specific Level  ***//
     if(req.body.findSecond){
       secondLevel.find({firstLevel:req.body.id},function(err, data){
         if(data){
@@ -112,7 +129,7 @@ console.log(req.body);
         }
       })
     }
-    
+
 });
 
 module.exports = router;

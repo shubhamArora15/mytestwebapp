@@ -16,6 +16,8 @@ var mongoose = require('mongoose');
 var users = require('./routes/users');
 var session = require('./routes/session');
 var hierarchy = require('./routes/hierarchy');
+var verify = require('./routes/verify');
+var saveImage = require('./routes/saveImage');
 
 var app = express();
 
@@ -37,9 +39,12 @@ app.use(express.static('views'));
 //**** CALLING ROUTES ***//
 
 app.use('/users', users);
-app.use('/session', session);
+app.use('/createSession', session);
+app.use('/viewSession', session);
 app.use('/createHierarchy', hierarchy);
-
+app.use('/verify', verify);
+app.use('/saveImage', saveImage);
+app.use('/verify/:email', verify);
 
 //*****  DATABASE CONNECTION ****** //
 

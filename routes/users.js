@@ -5,8 +5,11 @@ var users = require('../models/users');
 
 /* GET users listing. */
 router.post('/', function(req, res, next) {
+  console.log(req.body);
+
   if(req.body.login){
-    users.find({email:req.body.loginData.email},function(err, data){
+    console.log(req.body);
+    users.find({email:req.body.loginData.email, password:req.body.loginData.password},function(err, data){
       if(data.length > 0){
           res.send("done");
       }else{
@@ -17,17 +20,23 @@ router.post('/', function(req, res, next) {
 
   if(req.body.signup){
     var userData = new users({
-        email: req.body.email,
-        phone: req.body.phone,
-        password: req.body.password,
+        email: req.body.user.email,
+        phone: req.body.user.phone,
+        username: req.body.user.username,
+        password: req.body.user.password,
         status: "pending"
     });
-    users.find({email: req.body.email},function(err, data){
+    users.find({email: req.body.user.email},function(err, data){
       if(data.length > 0){
           res.send("already");
+      }else{
+        userData.save(function(err, data){
+          res.send(data);
+        })
       }
     })
   }
+
 });
 
 module.exports = router;

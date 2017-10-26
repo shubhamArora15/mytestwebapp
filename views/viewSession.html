@@ -1,4 +1,4 @@
-<section>
+<section ng-init = "viewSession()">
   <nav class="navbar navStyle">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -22,7 +22,7 @@
   </div>
 </nav>
 
-<div class="container-fluid text-center">
+<div class="container text-center">
   <div class="row content">
     <div class="col-sm-12 text-left">
       <h1>Welcome, "Shubham Arora"</h1>
@@ -35,20 +35,50 @@
 
       </center>
     </h2>
-      <div class="list-group">
-        <a class="list-group-item ">
-        </a>
-        <a class="list-group-item list-group-item-action">Dapibus ac facilisis in
-          <div class="">
-            QR code
-          </div>
-        </a>
-        <a class="list-group-item list-group-item-action">Morbi leo risus</a>
-        <a class="list-group-item list-group-item-action">Porta ac consectetur ac</a>
-        <a class="list-group-item list-group-item-action">Vestibulum at eros</a>
-      </div>
+      <!-- <div class="list-group">
+        <a class="list-group-item list-group-item-action" ng-repeat = "list in sessionList">
+          {{list.session}}<i class="fa-li fa fa-check-square"></i></a> -->
+          <ul class="list-group">
+            <li class="list-group-item" ng-repeat = "list in sessionList">
+              <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "deleteSession(list._id)">Delete</span>
+              <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "viewDetailSession(list)">View</span>
+              <span style="cursor:pointer"><h4>{{list.session}}'s </h4><h6>{{list.allLevel.level3.name}}</h6></span>
+
+              <div ng-attr-id="{{list._id}}"></div>
+            </li>
+          </ul>
+      <!-- </div> -->
     </div>
   </div>
+  <!-- Modal for each list data  -->
+
+  <div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">{{session}}</h4>
+      </div>
+      <div class="modal-body">
+        Media Lists:
+        <ul class="list-group">
+          <li class="list-group-item" ng-repeat = "list in mediaList">
+            <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "deleteMedia(list._id)">Delete</span>
+            <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "editMedia(list._id)">Edit</span>
+            <span style="cursor:pointer">{{list}}</span>
+          </li>
+        </ul>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
 </div>
 
 <footer class="container-fluid text-center">

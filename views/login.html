@@ -12,16 +12,16 @@
     <form class="shadow">
       <div class="form-group">
         <label for="email">Email address:</label>
-        <input type="email" class="form-control" id="email">
+        <input type="email" class="form-control" ng-model = "loginData.email">
       </div>
       <div class="form-group">
         <label for="pwd">Password:</label>
-        <input type="password" class="form-control" id="pwd">
+        <input type="password" class="form-control" ng-model = "loginData.password">
       </div>
       <!-- <div class="checkbox">
         <label><input type="checkbox"> Remember me</label>
       </div> -->
-      <button ng-click = "login()" class="btn btn-default">Login</button>
+      <button ng-click = "login(loginData)" class="btn btn-default">Login</button>
       <hr>
       <button  class="btn btn-primary" ng-click = "next('signup')">Not a member ? sign up here</button>
       <button  class="btn btn-secondary" ng-click = "next('reset')">Reset password</button>
