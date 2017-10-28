@@ -1,11 +1,40 @@
-var app = angular.module('myApp', ["ngAnimate", 'ui.router']);
+var app = angular.module('myApp', ["ngAnimate", 'ui.router', 'ui.sortable']);
 
 app.config(function($stateProvider, $urlRouterProvider) {
 
     $stateProvider
 
+
         // route to show our basic form
-        .state('signup', {
+        .state('adminDashboard', {
+            url: '/adminDashboard',
+            templateUrl: 'adminDashboard.html',
+            controller: 'adminController'
+        }).state('createHierarchy1', {
+            url: '/createHierarchy1',
+            templateUrl: 'createHierarchy1.html',
+            controller: 'adminController'
+        }).state('createHierarchy2', {
+            url: '/createHierarchy2',
+            templateUrl: 'createHierarchy2.html',
+            controller: 'adminController'
+        }).state('createHierarchy3', {
+            url: '/createHierarchy3',
+            templateUrl: 'createHierarchy3.html',
+            controller: 'adminController'
+        }).state('levelOne', {
+            url: '/levelOne',
+            templateUrl: 'levelOne.html',
+            controller: 'adminController'
+        }).state('levelTwo', {
+            url: '/levelTwo',
+            templateUrl: 'levelTwo.html',
+            controller: 'adminController'
+        }).state('levelThree', {
+            url: '/levelThree',
+            templateUrl: 'levelThree.html',
+            controller: 'adminController'
+        }).state('signup', {
             url: '/signup',
             templateUrl: 'signup.html',
             controller: 'formController'
@@ -43,7 +72,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
             templateUrl: 'resetPassword.html',
             controller: 'formController'
         }).state('verify', {
-            url: '#/verify/:email',
+            url: '/verify',
             templateUrl: 'verify.html',
             controller: 'formController'
         });
@@ -77,6 +106,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
   $rootScope.levelMain = "Select Level 2"
   $rootScope.levelSub = "Select Level 3"
   $rootScope.allLevel = {},$scope.sessionCoreArray = [];
+
   /*
   *******
   CHANGE STATE
@@ -135,6 +165,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
       });
   };
+
   /*
   ***
   GET LEVEL
@@ -223,9 +254,35 @@ app.config(function($stateProvider, $urlRouterProvider) {
     $http.post("/createSession", {id:id, deleteSession:true})
       .then(function(response){
         console.log(response);
-        $state.go("viewSession");
+        $state.reload();
           // alert("You successfully reset your password");
       });
+  }
+
+  /*
+  ***
+  UPDATE MEDIA ON SESSION CREATION
+  */
+  $scope.sortableOptions = {
+   stop: function(e, ui) {
+     // do something here
+     console.log($scope.photos);
+   }
+  };
+
+  /*
+  ***
+  UPDATE MEDIA ON SESSION VIEW
+  */
+  $scope.sortableOptions2 = {
+   stop: function(e, ui) {
+     // do something here
+     console.log($scope.mediaList);
+   }
+  };
+
+  $scope.updateMediaOnly = function(media, id){
+      console.log(media, id)
   }
 
   /*
@@ -234,10 +291,39 @@ app.config(function($stateProvider, $urlRouterProvider) {
   */
 
   $scope.viewDetailSession = function(list){
+    console.log(list);
+    $scope.sessionId = list._id;
+    $scope.sessionName = list.session
     $scope.mediaList = list.photos;
-    $("#myModal").modal('show');
+    $scope.allLevels = [{
+      name:list.allLevel.level1.name,
+      id:list.allLevel.level1.id,
+      index:'first'
+    },{
+      name:list.allLevel.level2.name,
+      id:list.allLevel.level2.id,
+      index:'second'
+    },{
+      name:list.allLevel.level3.name,
+      id:list.allLevel.level3.id,
+      index:'third'
+    }]
+    $("#myModal").modal('show')
   }
 
+  /*
+  ***
+  UPDATE LEVEL'S DETAILS
+  */
+
+  $scope.updateLevel = function(id, level, type){
+    console.log(level, type);
+    $http.post("/createHierarchy",{id:id,value:level,type:type,updateList:true})
+      .then(function(response){
+        console.log(response);
+        alert("done");
+    });
+  }
 
 
   /*
@@ -346,6 +432,224 @@ app.config(function($stateProvider, $urlRouterProvider) {
         value = value.split(".");
         ext = value[1];
         return ext;
+  }
+
+
+})
+.controller('adminController', function($scope, $state, $http, $rootScope) {
+  console.log("Admin Controller");
+
+  function __init(){
+  $rootScope.levelRoot = "Select Level 1";
+  $rootScope.levelMain = "Select Level 2";
+  $rootScope.levelSub = "Select Level 3";
+  $rootScope.levelValue = {};
+  $rootScope.levelValueTwo = {};
+  $scope.levelName = "";
+  $scope.levelId = "";
+
+  $rootScope.allLevel = {}
+
+  }
+
+  __init();
+
+
+  /*
+  *******
+  CHANGE STATE
+  */
+  $scope.next = function(nextState){
+      $state.go(nextState)
+  }
+
+  /*
+  ***
+  RANDOM STRING
+  */
+
+  $scope.randomString = function(len) {
+    var text = "";
+    var charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (var i = 0; i < len; i++)
+      text += charset.charAt(Math.floor(Math.random() * charset.length));
+    return text;
+  }
+
+
+
+  /*
+  ***
+  LOGOUT
+  */
+  $scope.logout = function(){
+    localStorage.clear();
+    $state.go("adminLogin");
+  }
+
+
+  /*
+  ***
+  GET LEVEL
+  */
+
+  $scope.levelList = function(){
+    $http.post('/createHierarchy', {getList:true})
+      .then(function(response){
+        console.log(response)
+          $scope.rootList = response.data;
+      })
+  }
+
+  /*
+  ***
+  GET  SECOND LEVEL
+  */
+
+  $scope.getSecondLevel = function(data){
+    console.log(data);
+
+    $rootScope.levelValue = data;
+    console.log($rootScope.levelValue._id);
+    $http.post('/createHierarchy', {getSecondList:true,id:data._id})
+      .then(function(response){
+        console.log(response)
+          $rootScope.levelRoot = data.name;
+          $scope.secondRootList = response.data;
+          var level1 = {
+            name:data.name,
+            id:data._id
+          }
+          $rootScope.allLevel['level1'] = level1;
+      })
+  }
+
+  /*
+  ***
+  GET THIRD LEVEL
+  */
+
+  $scope.getThirdLevel = function(data){
+
+    $rootScope.levelValue = data;
+    $rootScope.levelValueTwo = data;
+
+    $http.post('/createHierarchy', {getThirdList:true,id:data._id})
+      .then(function(response){
+        console.log(response);
+          $rootScope.levelMain = data.name
+          $scope.thirdRootList = response.data;
+
+          var level2 = {
+            name:data.name,
+            id:data._id
+          }
+
+          $rootScope.allLevel['level2'] = level2;
+      })
+  }
+
+  /*
+  ***
+  GET FINAL LEVEL
+  */
+
+  $scope.getFinalLevel = function(data){
+      $rootScope.levelSub = data.name;
+      var level3 = {
+        name:data.name,
+        id:data._id
+      }
+      $rootScope.allLevel['level3'] = level3;
+  }
+
+  /*
+  ***
+  CREATE HIERARCHY 1
+  */
+
+  $scope.createHierarchy1 = function(level){
+    var obj = {
+      level:level.name
+    }
+    $http.post("/createHierarchy",{obj,type:"l1"})
+      .then(function(response){
+        console.log(response)
+        localStorage.setItem("l1", response.data._id);
+        $state.go('adminDashboard');
+    });
+  }
+
+  /*
+  ***
+  CREATE HIERARCHY 2
+  */
+  $scope.createHierarchy2 = function(level, levelData){
+    console.log(level, levelData)
+    var obj = {
+      level:level.name,
+      level1:levelData._id
+    }
+    $http.post("/createHierarchy",{obj,type:"l2"})
+      .then(function(response){
+        localStorage.setItem("l2", response.data._id);
+        $state.go('adminDashboard');
+    });
+  }
+
+  /*
+  ***
+  CREATE HIERARCHY 3
+  */
+  $scope.createHierarchy3 = function(level, levelData, levelData2){
+    var obj = {
+      level:level.name,
+      level1:levelData._id,
+      level2:levelData2._id
+    }
+    $http.post("/createHierarchy",{obj,type:"l3"})
+      .then(function(response){
+        $state.go("viewHierarchy");
+    });
+  }
+
+  /*
+  ***
+  GET LEVEL
+  */
+
+  $scope.rootList = function(){
+    $http.post('/createHierarchy', {getList:true})
+      .then(function(response){
+        console.log(response)
+          $scope.rootList = response.data;
+      })
+  }
+
+  /*
+  ***
+  VIEW LEVEL'S DETAILS
+  */
+
+  $scope.viewDetailHierarchy = function(list){
+    console.log(list);
+    $scope.levelName = list.name;
+    $scope.levelId = list._id;
+    $("#myModal").modal('show')
+  }
+
+  /*
+  ***
+  UPDATE LEVEL'S DETAILS
+  */
+
+  $scope.updateLevel = function(id, level, type){
+    console.log(level, type);
+    $http.post("/createHierarchy",{id:id,value:level,type:type,updateList:true})
+      .then(function(response){
+        console.log(response);
+        alert("done");
+    });
   }
 
 

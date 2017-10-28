@@ -26,6 +26,12 @@
   <div class="row content">
     <div class="col-sm-12 text-left">
       <h1>Welcome, "Shubham Arora"</h1>
+      <div class="container">
+        <h2>People</h2>
+        <ul ui-sortable="sortableOptions" ng-model="people" class="list-group">
+          <li ng-repeat="person in people" class="list-group-item">{{person}}</li>
+        </ul>
+      </div>
       <hr>
       <h2>
       <center>
@@ -59,16 +65,31 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">{{session}}</h4>
+        <h4 class="modal-title" ng-model = "sessionName">{{sessionName}}</h4>
+        <div class="form-group">
+          <label for="text">Edit Session:</label>
+          <input type="text" class="form-control" value="{{sessionName}}">
+          <!-- <button ng-click = "updateLevel(levelId, levelName)" class="btn btn-default">Login</button> -->
+
+        </div>
+
       </div>
       <div class="modal-body">
+        Levels:
+        <div class="form-group" ng-repeat = "level in allLevels">
+          <label for="text">Edit Level</label>
+          <input type="text" class="form-control" value="{{level.name}}">
+          <button ng-click = "updateLevel(level.id, level.name, level.index )" class="btn btn-default">Update</button>
+        </div>
+
         Media Lists:
-        <ul class="list-group">
+        <ul class="list-group" ui-sortable="sortableOptions2" ng-model="mediaList">
           <li class="list-group-item" ng-repeat = "list in mediaList">
             <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "deleteMedia(list._id)">Delete</span>
-            <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "editMedia(list._id)">Edit</span>
+            <!-- <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "editMedia(list._id)">Edit</span> -->
             <span style="cursor:pointer">{{list}}</span>
           </li>
+          <button type="button" class="btn btn-default" data-dismiss="modal" ng-click = "updateMediaOnly(mediaList, sessionId)">Update</button>
         </ul>
 
       </div>

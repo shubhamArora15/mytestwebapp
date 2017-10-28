@@ -25,6 +25,7 @@ form {
 }
 footer {
   bottom:0px;
+  position: fixed;
   height: 70px;
   margin-top: 20px;
   width: 100%;
@@ -36,6 +37,17 @@ footer {
   -moz-box-shadow:    3px 3px 5px 2px lightgray;  /* Firefox 3.5 - 3.6 */
   box-shadow:         3px 3px 5px 2px lightgray;  /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
 }
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -1px;
+}
+
 a {
   color: white;
 }

@@ -1,0 +1,48 @@
+<section>
+  <nav class="navbar navStyle">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Session</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a ng-click = "next('adminDashboard')">Home</a></li>
+        <li><a ng-click = "next('createHierarchy')">Create Hierarchy</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown">View Hierarchy
+          <span class="caret"></span></button>
+          <ul class="dropdown-menu">
+              <li><a tabindex="-1" ng-click = "next('levelOne')">Level 1</a></li>
+              <li><a tabindex="-1" ng-click = "next('levelTwo')">Level 2</a></li>
+              <li><a tabindex="-1" ng-click = "next('levelThree')">Level 3</a></li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a ng-click = "logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid text-center">
+  <div class="row content">
+    <div class="col-sm-12 text-left">
+      <h1>Welcome, "Shubham Arora"</h1>
+      <hr>
+      <div >
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <p>Session ManageMent System</p>
+</footer>
+
+</section>

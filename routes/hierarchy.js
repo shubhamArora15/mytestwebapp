@@ -56,6 +56,7 @@ console.log(req.body);
       })
     }
     if(req.body.getSecondList){
+      console.log(req.body);
       secondLevel.find({firstLevel:req.body.id},function(err, data){
         if(data){
           res.send(data);

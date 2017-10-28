@@ -1,0 +1,83 @@
+<section ng-init = "levelList()">
+  <nav class="navbar navStyle">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Session</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a ng-click = "next('adminDashboard')">Home</a></li>
+        <li><a ng-click = "next('createHierarchy')">Create Hierarchy</a></li>
+        <li><a ng-click = "next('viewHierarchy')">View Hierarchy</a></li>
+        <li class="dropdown-submenu">
+        <a class="test" tabindex="-1" ng-click>View Hierarchy <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          <li><a tabindex="-1" ng-click = "next('LevelOne')">Level 1</a></li>
+          <li><a tabindex="-1" ng-click = "next('levelTwo')">Level 2</a></li>
+          <li><a tabindex="-1" ng-click = "next('levelThree')">Level 3</a></li>
+        </ul>
+      </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a ng-click = "logout()"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid text-center">
+  <div class="row content">
+    <div class="col-sm-12 text-left">
+      <h1>Welcome, "Shubham Arora"</h1>
+      <hr>
+      <div class="form shadow">
+        <h2><center>Create Level 3</center></h2>
+        <form class="shadow">
+
+          <div class="form-group">
+
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{levelRoot}}
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu" >
+                <li ng-repeat = "list in rootList" ng-click = "getSecondLevel(list)">
+                  <a style="cursor:pointer">{{list.name}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="form-group">
+
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{levelMain}}
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li ng-repeat  = "list in secondRootList" ng-click = "getThirdLevel(list)"><a>{{list.name}}</a></li>
+              </ul>
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label for="name">Level Name:</label>
+            <input type="name" class="form-control" id="name" ng-model = "levelThree.name">
+          </div>
+
+          <button type="submit" class="btn btn-default" ng-click = "createHierarchy3(levelThree, levelValue, levelValueTwo)">Create</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center">
+  <p>Session ManageMent System</p>
+</footer>
+
+</section>
