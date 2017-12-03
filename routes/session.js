@@ -43,7 +43,7 @@ router.post('/', function(req, res){
   }else if(req.body.viewSession){
     console.log(req.body);
     session.find({userId:req.body.userId}, function(err, data){
-        if(data.length > 0){
+        if(data && data.length > 0){
           res.send(data)
         }  else{
           res.send("404");
@@ -61,8 +61,50 @@ router.post('/', function(req, res){
   }else if(req.body.getSessionData){
     console.log(req.body, "dss");
     session.find({_id:req.body.sessionId},function(err, data){
-        if(data.length > 0){
+        if(data && data.length > 0){
           console.log(data);
+          res.send(data)
+        }  else{
+          res.send("404");
+        }
+    });
+  }else if(req.body.checkSession){
+    console.log(req.body);
+    session.update({_id:req.body.sessionId},{status:"scan"},function(err, data){
+        if(data){
+          console.log(data);
+          res.send(data);
+
+        }  else{
+          res.send("404");
+        }
+    });
+  }else if(req.body.updateSession){
+    console.log(req.body);
+    session.update({_id:req.body.id},{$set:{session:req.body.value, allLevel:req.body.allLevel}},function(err, data){
+        if(data){
+          console.log(data);
+          res.send(data);
+
+        }  else{
+          res.send("404");
+        }
+    });
+  }else if(req.body.updateMedia){
+    console.log(req.body);
+    session.update({_id:req.body.id},{$set:{photos:req.body.media}},function(err, data){
+        if(data){
+          console.log(data);
+          res.send(data);
+
+        }  else{
+          res.send("404");
+        }
+    });
+  }else if(req.body.findSession){
+    console.log(req.body, "dss");
+    session.find({status:"scan"},function(err, data){
+        if(data){
           res.send(data)
         }  else{
           res.send("404");

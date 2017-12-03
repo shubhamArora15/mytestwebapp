@@ -11,7 +11,7 @@ router.post('/', function(req, res, next) {
     console.log(req.body);
     users.find({email:req.body.loginData.email, password:req.body.loginData.password},function(err, data){
       if(data.length > 0){
-          res.send("done");
+          res.send(data);
       }else{
         res.send("fail")
       }
@@ -24,7 +24,8 @@ router.post('/', function(req, res, next) {
         phone: req.body.user.phone,
         username: req.body.user.username,
         password: req.body.user.password,
-        status: "pending"
+        status: "pending",
+        role:"client"
     });
     users.find({email: req.body.user.email},function(err, data){
       if(data.length > 0){

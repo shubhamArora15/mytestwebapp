@@ -16,7 +16,12 @@
     <script type="text/javascript" src = "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
     </script>
     <script src="/socket.io/socket.io.js"></script>
-
+    <!-- <script type="text/javascript">
+      var socket = io("http://localhost:3000");
+      socket.on('newclientconnect',function(data) {
+        console.log(data);
+      });
+    </script> -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
@@ -24,7 +29,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.16/angular-animate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-sortable/0.15.0/sortable.min.js"></script>
 
-    <script src = "javascripts/qrCode/qrcode.min.js"></script>
-    <script src = "javascripts/js/index.js"></script>
+    <script src = "/javascripts/qrCode/qrcode.min.js"></script>
+    <script src = "/javascripts/js/index.js"></script>
   </body>
 </html>

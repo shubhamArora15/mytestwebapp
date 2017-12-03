@@ -1,0 +1,40 @@
+<!-- <div class="" style="margin-bottom:4px;">
+  <center>
+    <button ng-click = "next('viewSession')" type="button" class="btn btn-primary"> ...View other session's slide show...</button>
+  <center>
+</div> -->
+<!-- <hr> -->
+<div id="carousel-example-generic" class="carousel slide container" style = "width:100%;height:100%" data-ride="carousel" ng-init = "firstElementCheck()">
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner">
+        <div class="item full-screen detectCarousel" style = "width:100%;height:100%" ng-attr-id = "{{photo.newName}}" ng-class="{'active': $first}" ng-repeat = "photo in photosData">
+        <center ng-if = "split(photo.newName) == 'jpg' || split(photo.newName) == 'jpg' || split(photo.newName) == 'png'"><h4>{{photo.title}}'s</h4></center>
+
+         <img class="img-responsive"  src="/images/{{photo.newName}}" style = "width:100%;height:700px"
+          ng-if = "split(photo.newName) == 'jpg' || split(photo.newName) == 'png' " alt="...">
+          <br>
+          <span>
+             <video ng-src="{{'/images/'+photo.newName}}"  ng-attr-id = "{{photo.newName}}" style = "width:100%;height:700px;"  ng-if = "split(photo.newName) == 'mp4' || split(photo.newName) == 'mkv'"  controls>
+             </video>
+          </span>
+          <span>
+           <audio  ng-if = "split(photo.newName) == 'mp3' " ng-attr-id = "{{photo.newName}}" controls style = "width:100%">
+             <source ng-src="{{'/images/'+photo.newName}}" type="audio/mpeg">
+             <!-- <source src="horse.mp3" type="audio/mpeg"> -->
+           </audio>
+         </span>
+
+       </center>
+          <div class="carousel-caption">
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <a class="left carousel-control" href="#carousel-example-generic" target = "_self" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" ng-click = "checkEvent(this.id)"></span>
+      </a>
+      <a class="right carousel-control" href="#carousel-example-generic" role="button" target = "_self" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" ng-click = "checkEvent()"></span>
+      </a>
+  </div>

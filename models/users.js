@@ -15,6 +15,9 @@ var userSchema = mongoose.Schema({
   },
   status: {
     type:String
+  },
+  role: {
+    type:String
   }
 });
 

@@ -68,6 +68,12 @@
             <label for="name">Session name:</label>
             <input type="name" class="form-control" id="name" ng-model = "session.name">
           </div>
+
+          <div class="form-group">
+            <label for="name">Session slide interval:</label>
+            <input type="name" class="form-control" id="interval" ng-model = "session.interval">
+          </div>
+
           <div class="form-group">
             <label for="photo1">Add File:</label>
             <input id="photo1" type="file"
@@ -76,13 +82,19 @@
             <div id = "showData">
 
             </div>
+            <div id="sessionTitle" style="display:none">
+              <label for="name">Enter Image Title:</label>
+              <input type="name" class="form-control" id="title" ng-model = "media.title">
+              <button type="button" class="btn btn-default" ng-click = "addTitle(media.title)">Create</button>
+
+            </div>
             <div class="form-group">
               <h2>View/Delete Media</h2>
               <ul ui-sortable="sortableOptions" ng-model="photos" class="list-group">
                 <li ng-repeat="photo in photos" class="list-group-item">
                   <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "deleteSession(list._id)">Delete</span>
                   <!-- <span class="badge" style="padding:6px 10px;width:100px;cursor:pointer" ng-click = "viewDetailSession(list)">View</span> -->
-                    {{photo}}
+                    {{photo.newName}}
                   </li>
               </ul>
             </div>

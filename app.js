@@ -23,7 +23,7 @@ var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
+// app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -31,8 +31,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static('views'));
 
 
@@ -74,9 +75,66 @@ db
 var server = require('http').Server(app);
 var io = require('socket.io')(server);
 
+var other = require('./io/other.js');
+var disconnect = require('./io/disconnect.js');
 
+
+// Set socket.io listeners.
+io.on('connection', (socket) => {
+  // Connection
+  console.log('===> User Connected.');
+
+  socket.on('user-connect', function(data){
+
+  });
+
+
+  socket.on('sessionData', function(data){
+    // io.in(socket.id).emit('newclientconnect',{sessionId:data.sessionId,userId:data.sessionId.userId});
+    console.log('=====> connecting agent', data);
+
+  socket.broadcast.emit('newclientconnect',{sessionId:data.sessionId, userId:data.id, sessionCoreId:data.sessionCoreId})
+      socket.emit('newclientconnect',{sessionId:data.sessionId, userId:data.id, sessionCoreId:data.sessionCoreId});
+  });
+
+  socket.on('viewOnWeb', function(data){
+
+    console.log('=====> connecting agent', data);
+
+    socket.broadcast.emit('specificWeb',{sessionId:data.sessionId, userId:data.id, sessionCoreId:data.sessionCoreId
+    })
+      socket.emit('specificWeb',{sessionId:data.sessionId, userId:data.id, sessionCoreId:data.sessionCoreId});
+  });
+
+  socket.on('sessionList', function(data){
+    console.log(data);
+    socket.emit('newclientconnect',{ sessionId:data.sessionData.id,
+      userId:data.sessionData.userId,
+      sCoreId:data.sessionData.sessionCoreId});
+    socket.broadcast.emit('newclientconnect',{ sessionId:data.sessionData.id,
+      userId:data.sessionData.userId,
+      sCoreId:data.sessionData.sessionCoreId})
+
+  });
+
+
+  socket.on('disconnect', function(data){
+    // console.log(io.sockets.adapter.rooms);
+    console.log('===>User Disconnected!');
+  });
+
+  socket.on('user-away', function(data){
+    console.log('===>User Away!');
+  });
+
+});
+
+
+
+//////////////
 //send first response file
 app.get('*', function(req, res) {
+
   res.sendFile("index.html",{root:__dirname}); // load the single view file (angular will handle the page changes on the front-end)
   // res.redirect('/');
 });

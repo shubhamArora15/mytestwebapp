@@ -102,9 +102,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
 }])
 .controller('formController', function($scope, $state, $http, $rootScope) {
 
-  $rootScope.levelRoot = "Select Level 1"
-  $rootScope.levelMain = "Select Level 2"
-  $rootScope.levelSub = "Select Level 3"
+  $rootScope.levelRoot = "Select Level 1";
+  $rootScope.levelMain = "Select Level 2";
+  $rootScope.levelSub = "Select Level 3";
+  $rootScope.name = localStorage.getItem('username');
   $rootScope.allLevel = {},$scope.sessionCoreArray = [];
 
   /*
@@ -115,6 +116,11 @@ app.config(function($stateProvider, $urlRouterProvider) {
       $state.go(nextState)
   }
 
+  if(localStorage.getItem('id')){
+      $state.go('home');
+  }else {
+    $state.go("login");
+  }
   /*
   *****
   CREATE USER
@@ -133,7 +139,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
             alert("You are already member");
           }else{
           alert("You email verification sent to: <br> "+ user.email);
-          $http.post("/verify", {user:user,verifyEmail:true})
+          $http.post("/verify?email="+user.email, {user:user,verifyEmail:true})
           .then(function(response){
 
           });
@@ -154,11 +160,15 @@ app.config(function($stateProvider, $urlRouterProvider) {
             alert("You Are successfully login");
             // $rootScope.id = response.data[0]._id
             localStorage.setItem('id', JSON.stringify(response.data[0]._id));
-            localStorage.setItem('name', JSON.stringify(response.data[0].name));
+            localStorage.setItem('name', JSON.stringify(response.data[0].username));
 
-            $rootScope.name = localStorage.getItem('name');
-            $state.go('home');
-
+            $rootScope.name = localStorage.getItem('username');
+            console.log(response.data, response.data[0].role);
+            if(response.data[0].role && response.data[0].role == "client"){
+              $state.go('home');
+            }else{
+              $state.go('adminDashboard');
+            }
         }else{
             alert("No Data Found");
         }
@@ -254,7 +264,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
     $http.post("/createSession", {id:id, deleteSession:true})
       .then(function(response){
         console.log(response);
-        $state.reload();
+
+        $scope.next('viewSession');
           // alert("You successfully reset your password");
       });
   }
@@ -264,6 +275,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
   UPDATE MEDIA ON SESSION CREATION
   */
   $scope.sortableOptions = {
+    // update: function(e, ui) {
+    //   // do something here
+    //   console.log($scope.photos);
+    // }
    stop: function(e, ui) {
      // do something here
      console.log($scope.photos);
@@ -275,6 +290,10 @@ app.config(function($stateProvider, $urlRouterProvider) {
   UPDATE MEDIA ON SESSION VIEW
   */
   $scope.sortableOptions2 = {
+    // update: function(e, ui) {
+    //   // do something here
+    //   console.log($scope.mediaList);
+    // }
    stop: function(e, ui) {
      // do something here
      console.log($scope.mediaList);
@@ -283,42 +302,171 @@ app.config(function($stateProvider, $urlRouterProvider) {
 
   $scope.updateMediaOnly = function(media, id){
       console.log(media, id)
+      $http.post("/createSession",{id:id, media:media, updateMedia:true})
+        .then(function(response){
+          console.log(response);
+          alert("done");
+      });
   }
 
   /*
   ***
   VIEW SESSION'S DETAILS
   */
-
+$scope.allLevels = [];
   $scope.viewDetailSession = function(list){
     console.log(list);
     $scope.sessionId = list._id;
     $scope.sessionName = list.session
     $scope.mediaList = list.photos;
-    $scope.allLevels = [{
-      name:list.allLevel.level1.name,
-      id:list.allLevel.level1.id,
-      index:'first'
-    },{
-      name:list.allLevel.level2.name,
-      id:list.allLevel.level2.id,
-      index:'second'
-    },{
-      name:list.allLevel.level3.name,
-      id:list.allLevel.level3.id,
-      index:'third'
-    }]
+    list.allLevel.forEach(function(item){
+        obj = {
+          name:item.name,
+          id:item.id,
+          index:item.index
+        }
+        $scope.allLevels.push(obj);
+    })
+    // $scope.allLevels = [{
+    //   name:list.allLevel.level1.name,
+    //   id:list.allLevel.level1.id,
+    //   index:'first'
+    // },{
+    //   name:list.allLevel.level2.name,
+    //   id:list.allLevel.level2.id,
+    //   index:'second'
+    // },{
+    //   name:list.allLevel.level3.name,
+    //   id:list.allLevel.level3.id,
+    //   index:'third'
+    // }]
     $("#myModal").modal('show')
   }
+
+  /*
+  ***
+  PLAY CAUROSAL
+  */
+
+  $('.carousel').carousel({
+    interval: 3000,
+    pause: "false"
+  });
+
+  // var $item = $('.carousel .item');
+  // var $wHeight = $(window).height();
+  // $item.height($wHeight);
+  // $item.addClass('full-screen');
+  // var element = document.getElementsByClassName('active');
+
+  // // else if(videoElem.length > 0){
+  // //   videoElem[0].autoplay = false;
+  // //   pauseAudio();
+  // // }
+  //
+  // if(audioElem.length){
+  //   audioElem[0].autoplay = true;
+  //   audioElem[0].load();
+  //   pauseVideo();
+  //   startStopCaurosol(audioElem[0]);
+  // }
+
+
+
+$('#carousel-example-generic').on('slide.bs.carousel', function (e) {
+
+    // var carouselElement = document.querySelector('carousel-example-generic');
+    // carouselElement.height = window.height;
+
+
+    // var element = document.getElementsByClassName('active');
+    // var element2 = $(document.getElementsByClassName('active')).next("div");
+    var carouselData = $(this).data('bs.carousel');
+
+    var currentIndex = carouselData.getItemIndex($(e.relatedTarget));
+    // but that is unnecessary because the current slide is in e.relatedTarget
+    var currentItem = $(e.relatedTarget);
+
+    var videoElem = $(currentItem[0]).children().find('video');
+    // .find('video');
+    // var videoElem2 = $(currentItem[0]).find('video');
+    var audioElem = $(currentItem[0]).children().find('audio');
+    // var audioElem2 = $(currentItem[0]).find('audio');
+
+    console.log(currentIndex,currentItem[0], "1, 2", audioElem, videoElem);
+
+      function startStopCaurosol(elementNew){
+        console.log(elementNew);
+
+        $(elementNew).on('play', function (e) {
+            $("#carousel-example-generic").carousel('pause');
+        });
+
+        $(elementNew).on('stop pause ended', function (e) {
+            $("#carousel-example-generic").carousel();
+        });
+
+      }
+
+      if(videoElem.length){
+        videoElem[0].autoplay = true;
+        videoElem[0].load();
+        pauseAudio();
+        startStopCaurosol(videoElem[0]);
+      }
+      else if(audioElem.length){
+        audioElem[0].autoplay = true;
+        audioElem[0].load();
+        pauseVideo();
+        startStopCaurosol(audioElem[0]);
+      }
+      // else if(audioElem.length > 0){
+      //   audioElem[0].autoplay = false;
+      //   pauseVideo()
+      // }
+      function pauseAudio(){
+
+        if(audioElem.length){
+          audioElem[0].pause();
+        }else {
+          return
+        }
+        // else if(audioElem.length > 0){
+        //   audioElem[0].pause();
+        // }
+      }
+
+      function pauseVideo(){
+
+        if(videoElem.legth){
+          videoElem[0].pause();
+        }else {
+          return
+        }
+        // else if(videoElem.length > 0){
+        //   videoElem[0].pause();
+        // }
+      }
+
+    // var length = $(document.getElementsByClassName('active')).next("div").length;
+    // // var length2 = $(document.getElementsByClassName('active')).prev("div").length;
+    if(length === 0){
+      // pauseAudio();
+      // pauseVideo();
+      // $(element2[0]).removeAttribute('autoplay');;$(element[0]).removeAttribute('autoplay');;
+    }
+  });
+
+
 
   /*
   ***
   UPDATE LEVEL'S DETAILS
   */
 
-  $scope.updateLevel = function(id, level, type){
-    console.log(level, type);
-    $http.post("/createHierarchy",{id:id,value:level,type:type,updateList:true})
+  $scope.updateLevel = function(id, level, allLevel){
+    console.log(level, allLevel);
+    $http.post("/createSession",{id:id,value:level, allLevel:allLevel, updateSession:true})
       .then(function(response){
         console.log(response);
         alert("done");
@@ -369,36 +517,120 @@ app.config(function($stateProvider, $urlRouterProvider) {
       });
   }
 
+  // Get session data
+$scope.firstElementCheck = function(){
+    setTimeout(function()
+    {
+      var element = document.getElementsByClassName('detectCarousel');
+    var videoElem = $(element[0]).children().find('video');
+    var audioElem = $(element[0]).children().find('audio');
+    console.log(element, videoElem, audioElem);
+    if(videoElem.length){
+      videoElem[0].autoplay = true;
+      videoElem[0].load();
+      pauseAudio();
+      startStopCaurosol(videoElem[0]);
+    }
+    if(audioElem.length){
+      audioElem[0].autoplay = true;
+      audioElem[0].load();
+      pauseVideo();
+      startStopCaurosol(audioElem[0]);
+    }
+
+    function pauseAudio(){
+
+      if(audioElem.length){
+        audioElem[0].pause();
+      }
+    }
+
+    function pauseVideo(){
+
+      if(videoElem.legth){
+        videoElem[0].pause();
+      }
+    }
+    function startStopCaurosol(elementNew){
+      console.log(elementNew);
+      $(elementNew).on('play', function () {
+
+      $("#carousel-example-generic").carousel('pause');
+
+      });
+      $(elementNew).on('stop pause ended', function (e) {
+          $("#carousel-example-generic").carousel();
+      });
+    }
+  });
+
+}
+  $scope.getSessionData = function(id){
+    $http.post("/viewSession", {sessionId:id, getSessionData:true})
+    .then(function(response){
+      console.log(response.data);
+      $rootScope.photosData = response.data[0].photos;
+      console.log($rootScope.photosData);
+
+      $state.go('slideShow');
+
+      // openSlideShow();
+      // console.log($scope.photosData)
+    });
+  }
 
   //////////
   // Upload Files
 
   $scope.photos = [];
+  $scope.media = {
+    title: ''
+  }
 
-  $('#photo1').on("change", function(e){
-    uploadFile("photo1");
-  });
+    $scope.addTitle = function(title){
+      uploadFile("photo1", title);
+    }
+
+    $('#photo1').on("change", function(e){
+      uploadFile("photo1", undefined);
+    });
 
 
-  function uploadFile(id){
+
+  function uploadFile(id, title){
     var file    = document.getElementById(id).files[0];
     var fd = new FormData();
-
+    console.log(file);
     var uploadUrl = '/saveImage';
 
     var newName = $scope.randomString(6)+ "."+$scope.split(file.name);
     console.log(newName);
     fd.append('file', file, newName);
     // console.log(file);
-    $http.post(uploadUrl, fd, {
-        transformRequest: angular.identity,
-        headers: { 'Content-Type': undefined }
-    })
-    .then(function(response) {
-        $scope.photos.push(newName);
-        str = "You Uploaded:  <span style = 'font-size:18px'><b> "+$scope.photos.length +"</b></span>  File successfully";
-        $("#showData").html(str);
-    })
+    if(($scope.split(file.name) != "jpg" && $scope.split(file.name) && "jpeg" &&
+        $scope.split(file.name) != "png" && $scope.split(file.name) != "ico") || title){
+          console.log("not image");
+          $("#sessionTitle").hide();
+          $http.post(uploadUrl, fd, {
+              transformRequest: angular.identity,
+              headers: { 'Content-Type': undefined }
+          })
+          .then(function(response) {
+              var obj = {
+                newName : newName,
+                title   : title
+              }
+              console.log(obj, "obj");
+              $scope.photos.push(obj);
+              $scope.media.title = '';
+              console.log($scope.photos);
+              obj.title = '';
+              str = "You Uploaded:  <span style = 'font-size:18px'><b> "+$scope.photos.length +"</b></span>  File successfully";
+              $("#showData").html(str);
+          });
+        }else {
+          $("#sessionTitle").show();
+        }
   }
 
 
@@ -434,6 +666,46 @@ app.config(function($stateProvider, $urlRouterProvider) {
         return ext;
   }
 
+  //session
+
+  //socket implementation
+  var socket = io();
+
+  socket.on('checkIs', function(data){
+      console.log(data)
+  })
+
+  socket.on('specificWeb', function(data){
+    console.log(data, localStorage.getItem('sessionArray'), localStorage.getItem('id'))
+    if(data.userId == JSON.parse(localStorage.getItem('id'))
+    && JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sessionCoreId) != -1){
+      console.log("done");
+      $state.go('viewSession');
+    }
+  });
+  socket.on('newclientconnect', function(data) {
+    console.log("done");
+    console.log(data, localStorage.getItem('id'), localStorage.getItem('sessionArray'));
+    if(data.sessionId!="data"){
+      console.log(JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sessionCoreId), data.sessionCoreId)
+      if(data.userId == JSON.parse(localStorage.getItem('id'))
+      && JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sessionCoreId) != -1){
+        $http.post("/viewSession", {sessionId:data.sessionId, getSessionData:true})
+        .then(function(response){
+          $rootScope.photosData = response.data[0].photos;
+          $state.go('slideShow');
+        });
+      }
+    }else{
+      console.log(data);
+      if(JSON.parse(data.userId) == JSON.parse(localStorage.getItem('id'))
+      && JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sCoreId) != -1){
+        console.log("done");
+        $state.go('viewSession');
+      }
+    }
+  });
+
 
 })
 .controller('adminController', function($scope, $state, $http, $rootScope) {
@@ -453,6 +725,8 @@ app.config(function($stateProvider, $urlRouterProvider) {
   }
 
   __init();
+
+
 
 
   /*
@@ -576,7 +850,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
       .then(function(response){
         console.log(response)
         localStorage.setItem("l1", response.data._id);
-        $state.go('adminDashboard');
+        $state.go('createHierarchy2');
     });
   }
 
@@ -593,7 +867,7 @@ app.config(function($stateProvider, $urlRouterProvider) {
     $http.post("/createHierarchy",{obj,type:"l2"})
       .then(function(response){
         localStorage.setItem("l2", response.data._id);
-        $state.go('adminDashboard');
+        $state.go('createHierarchy3');
     });
   }
 
@@ -609,7 +883,19 @@ app.config(function($stateProvider, $urlRouterProvider) {
     }
     $http.post("/createHierarchy",{obj,type:"l3"})
       .then(function(response){
-        $state.go("viewHierarchy");
+        $state.go("adminDashboard");
+    });
+  }
+
+  /*
+  ***
+  CREATE HIERARCHY 3
+  */
+  $scope.deleteHierarchy = function(id){
+
+    $http.post("/createHierarchy",{id:id, deleteList:true})
+      .then(function(response){
+        $state.go("adminDashboard");
     });
   }
 
@@ -644,13 +930,53 @@ app.config(function($stateProvider, $urlRouterProvider) {
   */
 
   $scope.updateLevel = function(id, level, type){
-    console.log(level, type);
+    console.log(level, id, type);
     $http.post("/createHierarchy",{id:id,value:level,type:type,updateList:true})
       .then(function(response){
         console.log(response);
         alert("done");
     });
   }
+
+  //socket implementation
+  var socket = io();
+
+  socket.on('checkIs', function(data){
+      console.log(data)
+  })
+
+  socket.on('specificWeb', function(data){
+    if(JSON.parse(data.userId) == JSON.parse(localStorage.getItem('id'))
+    && JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sessionCoreId) != -1){
+      console.log("done");
+      $state.go('viewSession');
+    }
+  });
+  // socket.on('newclientconnect', function(data){
+  //     console.log(data, "done");
+  // })
+  socket.on('newclientconnect', function(data) {
+    console.log("done");
+    console.log(data, localStorage.getItem('id'), localStorage.getItem('sessionArray'));
+    if(data.sessionId!="data"){
+      console.log(JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sessionCoreId), data.sessionCoreId)
+      if(data.userId == JSON.parse(localStorage.getItem('id'))
+      && JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sessionCoreId) != -1){
+        $http.post("/viewSession", {sessionId:data.sessionId, getSessionData:true})
+        .then(function(response){
+          $rootScope.photosData = response.data[0].photos;
+          $state.go('slideShow');
+        });
+      }
+    }else{
+      console.log(data);
+      if(JSON.parse(data.userId) == JSON.parse(localStorage.getItem('id'))
+      && JSON.parse(localStorage.getItem('sessionArray')).indexOf(data.sCoreId) != -1){
+        console.log("done");
+        $state.go('viewSession');
+      }
+    }
+  });
 
 
 });
